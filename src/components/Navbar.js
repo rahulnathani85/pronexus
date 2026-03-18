@@ -47,7 +47,7 @@ export default function Navbar(props) {
           })}
         </div>
 
-        <div className="flex gap-2.5 items-center">
+        <div className="flex gap-2 items-center">
           {user ? (
             <>
               <Link href="/profile" className="no-underline flex items-center gap-2">
@@ -67,6 +67,12 @@ export default function Navbar(props) {
             </>
           ) : (
             <>
+              <button
+                className="bg-transparent text-brand-950 border-none py-1.5 px-4 text-[13px] font-semibold cursor-pointer hover:bg-[#F4F3EF] rounded-lg transition-all"
+                onClick={function() { props.onLogin(); }}
+              >
+                Log in
+              </button>
               <button className="btn-outline !py-1.5 !px-4 !text-[13px]" onClick={props.onPricing}>Pricing</button>
               <button className="btn-primary !py-1.5 !px-5 !text-[13px]" onClick={props.onJoin}>Join Free</button>
             </>
