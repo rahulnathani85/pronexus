@@ -1,40 +1,37 @@
-import { EVENTS_FULL } from '../data/constants';
+import { useState, useEffect } from 'react';
+import { supabase } from '../utils/supabase';
+import { useAuth } from '../components/AuthContext';
+import { Modal } from '../components/UI';
 
-export default function EventsPage({ onJoin }) {
+const COLORS = ['bg-brand-950', 'bg-emerald-800', 'bg-purple-900'];
+
+function CreateEventModal({ onClose, onCreated }) {
+  const { user } = useAuth();
+  const [form, setForm] = useState({ title: '', description: '', date: '', location: '', event_type: 'Webinar', price: 'Free' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const handleSubmit = async () => {
+    if (!form.title || !form.date) { setError('Title and date are required'); return; }
+    setLoading(true);
+    const { error: err } = await supabase.from('events').insert({ ...form, author_id: user.id });
+    if (err) setError(err.message);
+    else { onCreated(); onClose(); }
+    setLoading(false);
+  };
   return (
-    <div className="py-10">
-      <div className="flex justify-between items-center mb-7 flex-wrap gap-3">
-        <div>
-          <h2 className="font-display text-[32px] font-extrabold">Events & Learning</h2>
-          <p className="text-gray-500 text-sm mt-1">Conferences, webinars, workshops, and CPE sessions</p>
+    <Modal onClose={onClose}>
+      <div className="p-8">
+        <h3 className="font-display text-2xl font-extrabold mb-4">Host an event</h3>
+        {error && <div className="bg-red-50 text-red-700 text-sm px-4 py-2.5 rounded-lg mb-4">{error}</div>}
+        <div className="mb-4"><label className="block font-semibold text-[13px] mb-1.5">Event title</label><input type="text" placeholder="e.g. GST Compliance Workshop" value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="w-full px-3.5 py-2.5 border border-[#E8E6E1] rounded-lg text-sm outline-none focus:border-brand-950" /></div>
+        <div className="mb-4"><label className="block font-semibold text-[13px] mb-1.5">Description</label><textarea placeholder="What will this event cover?" value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} className="w-full px-3.5 py-2.5 border border-[#E8E6E1] rounded-lg text-sm outline-none focus:border-brand-950 resize-none" /></div>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div><label className="block font-semibold text-[13px] mb-1.5">Date</label><input type="text" placeholder="e.g. April 15, 2026" value={form.date} onChange={e => setForm({...form, date: e.target.value})} className="w-full px-3.5 py-2.5 border border-[#E8E6E1] rounded-lg text-sm outline-none focus:border-brand-950" /></div>
+          <div><label className="block font-semibold text-[13px] mb-1.5">Location</label><input type="text" placeholder="e.g. Virtual or Mumbai" value={form.location} onChange={e => setForm({...form, location: e.target.value})} className="w-full px-3.5 py-2.5 border border-[#E8E6E1] rounded-lg text-sm outline-none focus:border-brand-950" /></div>
         </div>
-        <button className="btn-primary" onClick={onJoin}>+ Host an Event</button>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {EVENTS_FULL.map((ev, i) => (
-          <div key={i} className="card overflow-hidden">
-            <div className={ev.color + " px-5 py-3.5 text-white"}>
-              <div className="text-[11px] font-bold uppercase tracking-widest opacity-80 mb-1">{ev.type}</div>
-              <h3 className="font-bold text-lg leading-snug">{ev.title}</h3>
-            </div>
-            <div className="p-5">
-              <div className="flex flex-col gap-1.5 mb-3.5 text-[13px]">
-                <span>📅 {ev.date}</span>
-                <span>📍 {ev.loc}</span>
-                <span>👥 {ev.attendees} attending</span>
-                <span className={"font-bold " + (ev.price === 'Free' || ev.price === 'Free for members' ? 'text-green-700' : 'text-amber-600')}>{ev.price}</span>
-              </div>
-              <p className="text-[13px] text-gray-500 leading-relaxed mb-4">{ev.desc}</p>
-              <button className="btn-primary w-full">Register Now</button>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-12 card p-10 text-center bg-gradient-to-br from-brand-950 to-brand-800 !border-0 text-white">
-        <h3 className="font-display text-2xl font-extrabold mb-2">Want to host your own event?</h3>
-        <p className="text-white/70 text-sm max-w-md mx-auto mb-6">Reach thousands of finance and law professionals. Host webinars, workshops, or conferences through ProNexus.</p>
-        <button className="bg-white text-brand-950 border-none px-8 py-3 rounded-lg font-bold text-sm cursor-pointer hover:bg-gray-100" onClick={onJoin}>Get Started — It&apos;s Free</button>
-      </div>
-    </div>
-  );
-}
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div><label className="block font-semibold text-[13px] mb-1.5">Type</label><select value={form.event_type} onChange={e => setForm({...form, event_type: e.target.value})} className="w-full px-3.5 py-2.5 border border-[#E8E6E1] rounded-lg text-sm outline-none bg-white"><option>Webinar</option><option>Workshop</option><option>Conference</option><option>Seminar</option></select></div>
+          <div><label className="block font-semibold text-[13px] mb-1.5">Price</label><input type="text" placeholder="Free or Rs.500" value={form.price} onChange={e => setForm({...form, price: e.target.value})} className="w-full px-3.5 py-2.5 border border-[#E8E6E1] rounded-lg text-sm outline-none focus:border-brand-950" /></div>
+        </div>
+        <button className="btn-primary w-full !py-3" onClick={handleSubmit} disabled={loading}>{loading ? 'Creating...' : 'Create Event'}</button>
+      </di
