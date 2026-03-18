@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import JoinModal from '../components/JoinModal';
 import PricingModal from '../components/PricingModal';
+import { AuthProvider } from '../components/AuthContext';
 import Head from 'next/head';
 
 export default function App({ Component, pageProps }) {
@@ -11,7 +12,7 @@ export default function App({ Component, pageProps }) {
   const [showPricingModal, setShowPricingModal] = useState(false);
 
   return (
-    <>
+    <AuthProvider>
       <Head>
         <title>ProNexus — Where Finance and Law Professionals Connect</title>
         <meta name="description" content="India's premier AI-powered platform connecting Chartered Accountants, Company Secretaries, Lawyers, Valuers, Cost Accountants, and Tax Professionals." />
@@ -24,6 +25,6 @@ export default function App({ Component, pageProps }) {
       <Footer />
       {showJoinModal && <JoinModal onClose={() => setShowJoinModal(false)} />}
       {showPricingModal && <PricingModal onClose={() => setShowPricingModal(false)} />}
-    </>
+    </AuthProvider>
   );
 }
