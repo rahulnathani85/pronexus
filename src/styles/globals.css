@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,400&family=Playfair+Display:wght@400;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #FAFAF7;
+  --bg-card: #FFFFFF;
+  --bg-hover: #F4F3EF;
+  --accent: #0D3B66;
+  --accent-light: #0D3B6612;
+  --accent-warm: #C4841D;
+  --success: #1B7A3D;
+  --text-primary: #1A1A1A;
+  --text-secondary: #555555;
+  --text-tertiary: #999999;
+  --border: #E8E6E1;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: #0D3B6633; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-950 text-white border-none px-6 py-2.5 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200;
+  }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-outline {
+    @apply bg-transparent text-brand-950 border-[1.5px] border-brand-950 px-6 py-2.5 rounded-lg font-semibold text-sm cursor-pointer transition-all duration-200;
+  }
+  .btn-outline:hover { background: #F0F4F8; }
+  .card {
+    @apply bg-white rounded-xl border border-[#E8E6E1] shadow-sm transition-all duration-200;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-2px); }
+  .tag {
+    @apply inline-block px-2.5 py-0.5 rounded-md text-xs font-medium bg-[#F4F3EF] text-[#555];
+  }
+}
