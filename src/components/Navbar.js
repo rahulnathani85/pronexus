@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useAuth } from './AuthContext';
+import { Avatar } from './UI';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Home' },
@@ -11,6 +13,8 @@ const NAV_ITEMS = [
 
 export default function Navbar({ onJoin, onPricing }) {
   const router = useRouter();
+  const { user, profile, signOut } = useAuth();
+
   return (
     <nav className="sticky top-0 z-50 border-b border-[#E8E6E1] px-6" style={{ background: 'rgba(250,250,247,0.92)', backdropFilter: 'blur(12px)' }}>
       <div className="max-w-[1200px] mx-auto flex items-center justify-between h-16">
@@ -26,8 +30,19 @@ export default function Navbar({ onJoin, onPricing }) {
           ))}
         </div>
         <div className="flex gap-2.5 items-center">
-          <button className="btn-outline !py-1.5 !px-4 !text-[13px]" onClick={onPricing}>Pricing</button>
-          <button className="btn-primary !py-1.5 !px-5 !text-[13px]" onClick={onJoin}>Join Free</button>
+          {user ? (
+            <>
+              <Link href="/profile" className="no-underline">
+                <Avatar initials={profile?.avatar_initials || 'U'} size={34} org={profile?.org || 'CA'} />
+              </Link>
+              <button className="btn-outline !py-1.5 !px-4 !text-[13px]" onClick={signOut}>Logout</button>
+            </>
+          ) : (
+            <>
+              <button className="btn-outline !py-1.5 !px-4 !text-[13px]" onClick={onPricing}>Pricing</button>
+              <button className="btn-primary !py-1.5 !px-5 !text-[13px]" onClick={onJoin}>Join Free</button>
+            </>
+          )}
         </div>
       </div>
     </nav>
